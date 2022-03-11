@@ -43,7 +43,7 @@ def load(**context):
     cur = get_Redshift_connection()
     rows = context["task_instance"].xcom_pull(key="return_value", task_ids="transform")
     sql = f"BEGIN; DELETE FROM {schema}.{table};"
-    sql += f"INSERT INTO {schema}.{table} VALUES " + ', '.join(f'({row[0]}, {row[1]}, {row[2]}, {row[3]})' for row in rows) + ";"
+    sql += f"INSERT INTO {schema}.{table} VALUES {str(rows)[1:-1].replace('[', '(').replace(']', ')')};"
     sql += "END;"
     logging.info(sql)
     cur.execute(sql)
